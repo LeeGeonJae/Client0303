@@ -3,6 +3,7 @@
 
 #include <WinSock2.h>
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -10,6 +11,13 @@ using namespace std;
 
 int main()
 {
+	string Filename;
+
+	cout << "Filename ? ";
+
+	cin >> Filename;
+
+
 	//윈속 초기화
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -27,11 +35,15 @@ int main()
 
 	connect(ServerSocket, (SOCKADDR*)&ServerAddr, sizeof(ServerAddr));
 
-	FILE* ofp = fopen("meat.jpg", "wb");
+	string Packet = "get " + Filename; //Protocol
+
+	send(ServerSocket, Packet.c_str(), Packet.length(), 0);
+
+	FILE* ofp = fopen(Filename.c_str(), "wb");
 	char Buffer[2049];
 	while (1)
 	{
-		int recvLength = recv(ServerSocket, Buffer, 1, 0);
+		int recvLength = recv(ServerSocket, Buffer, 2048, 0);
 		if (recvLength == 0) //close
 		{
 			break;
